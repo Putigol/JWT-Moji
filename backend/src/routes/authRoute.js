@@ -1,5 +1,5 @@
 import express from "express";
-import { signUp, signIn } from "../controllers/authController.js";
+import { signUp, signIn, signOut } from "../controllers/authController.js";
 
 const router = express.Router();
 
@@ -8,4 +8,8 @@ router.post("/signup", signUp);
 
 //signin API
 router.post("/signin", signIn);
+
+//signout API
+router.post("/signout", signOut);
+
 export default router;

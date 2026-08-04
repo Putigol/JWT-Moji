@@ -106,3 +106,22 @@ export const signIn = async (req, res) => {
     res.status(500).json({ message: "Có lỗi hệ thống xảy ra khi đăng nhập" });
   }
 };
+
+//signout API
+export const signOut = async (req, res) => {
+  try {
+    //lấy refreshToken từ cookie
+    const token = req.cookies?.refreshToken;
+    if (!token) {
+      //xoá refresh token trong Session
+      await Session.deleteOne({ refreshToken: token });
+      //xoá cookie
+      res.clearCookie("refreshToken");
+    }
+
+    return res.sendStatus(204);
+  } catch (error) {
+    console.error("Lỗi khi gọi signOut:", error);
+    res.status(500).json({ message: "Có lỗi hệ thống xảy ra khi đăng xuất" });
+  }
+};
