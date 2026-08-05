@@ -1,18 +1,58 @@
+// zodResolver kết nối zod với react-hook-form để xác thực dữ liệu form dựa trên schema zod
+//zod lo phần kiểm tra dữ liệu, react-hook-form lo phần quản lý form và hiển thị lỗi
+//register: theo dõi giá trị của các trường input
+//handleSubmit: thực thi khi bấm nút đăng ký
+//formState: lấy ra error nếu input không hợp lệ
+//isSubmitting: cho biết form đang trong quá trình nào khi gửi dữ liệu
+
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "../ui/label";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useNavigate } from "react-router";
+
+//mô tả điều kiện của form đăng ký, ví dụ: email phải hợp lệ, mật khẩu phải có ít nhất 8 ký tự, v.v.
+const signUpSchema = z.object({
+  firstName: z.string().min(1, "Tên bắt buộc phải có ít nhất 1 ký tự"),
+  lastName: z.string().min(1, "Họ bắt buộc phải có ít nhất 1 ký tự"),
+  username: z.string().min(3, "Tên đăng nhập phải có ít nhất 3 ký tự"),
+  email: z.email("Email không hợp lệ"),
+  password: z.string().min(6, "Mật khẩu phải có ít nhất 6 ký tự"),
+});
+
+//Khai báo kiểu cho form suy ra từ schema
+type SignUpFormValues = z.infer<typeof signUpSchema>;
 
 export function SignupForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+  const navigate = useNavigate();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<SignUpFormValues>({
+    resolver: zodResolver(signUpSchema), //để kết nối useFrom với zod schema
+  });
+
+  const onSubmit = async (data: SignUpFormValues) => {
+    const { firstName, lastName, username, email, password } = data;
+
+    // gọi backend để signup
+    await signUp(username, password, email, firstName, lastName);
+
+    navigate("/signin");
+  };
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card className="overflow-hidden p-0 border-border">
         <CardContent className="grid p-0 md:grid-cols-2">
-          <form className="p-6 md:p-8">
+          <form className="p-6 md:p-8" onSubmit={handleSubmit(onSubmit)}>
             <div className="flex flex-col gap-6">
               {/* header - logo */}
               <div className="flex flex-col items-center text-center gap-2">
@@ -32,26 +72,49 @@ export function SignupForm({
                   <Label htmlFor="lastName" className="block text-sm">
                     Họ
                   </Label>
-                  <Input type="text" id="lastName" />
+                  <Input type="text" id="lastName" {...register("lastName")} />
                   {/* todo: error message */}
+                  {errors.lastName && (
+                    <p className="text-destructive text-sm">
+                      {errors.lastName.message}
+                    </p>
+                  )}
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="firstName" className="block text-sm">
                     Tên
                   </Label>
-                  <Input type="text" id="firstName" />
+                  <Input
+                    type="text"
+                    id="firstName"
+                    {...register("firstName")}
+                  />
                   {/* todo: error message */}
+                  {errors.firstName && (
+                    <p className="text-destructive text-sm">
+                      {errors.firstName.message}
+                    </p>
+                  )}
                 </div>
-
               </div>
               {/* username */}
               <div className="flex flex-col gap-3">
                 <Label htmlFor="username" className="block text-sm">
                   Tên đăng nhập
                 </Label>
-                <Input type="text" id="username" placeholder="moji" />
+                <Input
+                  type="text"
+                  id="username"
+                  placeholder="moji"
+                  {...register("username")}
+                />
                 {/* todo: error message */}
+                {errors.username && (
+                  <p className="text-destructive text-sm">
+                    {errors.username.message}
+                  </p>
+                )}
               </div>
 
               {/* email */}
@@ -59,7 +122,18 @@ export function SignupForm({
                 <Label htmlFor="email" className="block text-sm">
                   Email
                 </Label>
-                <Input type="email" id="email" placeholder="m@gmail.com" />
+                <Input
+                  type="email"
+                  id="email"
+                  placeholder="m@gmail.com"
+                  {...register("email")}
+                />
+                {/* todo: error message */}
+                {errors.email && (
+                  <p className="text-destructive text-sm">
+                    {errors.email.message}
+                  </p>
+                )}
               </div>
 
               {/* password */}
@@ -67,12 +141,21 @@ export function SignupForm({
                 <Label htmlFor="password" className="block text-sm">
                   Mật khẩu
                 </Label>
-                <Input type="password" id="password" />
+                <Input
+                  type="password"
+                  id="password"
+                  {...register("password")}
+                />
                 {/* todo: error message */}
+                {errors.password && (
+                  <p className="text-destructive text-sm">
+                    {errors.password.message}
+                  </p>
+                )}
               </div>
 
               {/* nút đăng ký */}
-              <Button type="submit" className="w-full">
+              <Button type="submit" className="w-full" disabled={isSubmitting}>
                 Tạo tài khoản
               </Button>
 
