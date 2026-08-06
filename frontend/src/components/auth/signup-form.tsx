@@ -14,6 +14,7 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router";
+import { useAuthStore } from "@/stores/useAuthStore";
 
 //mô tả điều kiện của form đăng ký, ví dụ: email phải hợp lệ, mật khẩu phải có ít nhất 8 ký tự, v.v.
 const signUpSchema = z.object({
@@ -32,6 +33,7 @@ export function SignupForm({
   ...props
 }: React.ComponentProps<"div">) {
   const navigate = useNavigate();
+  const { signUp } = useAuthStore();
   const {
     register,
     handleSubmit,
