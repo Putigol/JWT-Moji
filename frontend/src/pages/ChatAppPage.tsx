@@ -1,5 +1,4 @@
-import Logout from "../components/auth/logout";
-
+import Logout from "../components/auth/Logout";
 const ChatAppPage = () => {
   return (
     <div>
