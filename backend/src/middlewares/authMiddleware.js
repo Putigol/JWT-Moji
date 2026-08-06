@@ -38,6 +38,6 @@ export const protectedRoute = async (req, res, next) => {
       },
     );
   } catch (error) {
-    return res.status(401).json({ message: "Lỗi hệt thống khi xác thực" });
+    return res.status(401).json({ message: "Lỗi hệ thống khi xác thực" });
   }
 };

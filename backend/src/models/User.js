@@ -4,14 +4,14 @@ const userSchema = new mongoose.Schema(
   {
     username: {
       type: String,
-      required: true, //Lưu mật khẩu đã hash, không lưu mật khẩu gốc
+      required: true,
       unique: true,
       trim: true,
       lowercase: true,
     },
     hashedPassword: {
       type: String,
-      required: true,
+      required: true, //Lưu mật khẩu đã hash, không lưu mật khẩu gốc
     },
     email: {
       type: String,
