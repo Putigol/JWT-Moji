@@ -9,3 +9,7 @@ export const authMe = async (req, res) => {
       .json({ message: "Có lỗi hệ thống xảy ra khi lấy thông tin user" });
   }
 };
+
+export const test = async (req, res) => {
+  return res.sendStatus(204);
+};
