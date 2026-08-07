@@ -36,4 +36,10 @@ export const authService = {
     const res = await api.get("/users/me", { withCredentials: true });
     return res.data.user;
   },
+
+  //gọi API để dùng endpoint trong frontend
+  refresh: async () => {
+    const res = await api.post("/auth/refresh", {}, { withCredentials: true });
+    return res.data.accessToken;
+  },
 };
