@@ -2,7 +2,7 @@ import { useAuthStore } from "@/stores/useAuthStore";
 import { Navigate, Outlet } from "react-router";
 
 const ProtectedRoute = () => {
-  const { accessToken, user, loading } = useAuthStore();
+  const { accessToken } = useAuthStore();
 
   //người dùng chưa đăng nhập (chưa nhận accessToken)
   if (!accessToken) {
@@ -15,8 +15,7 @@ const ProtectedRoute = () => {
     );
   }
 
-  return;
-  <Outlet></Outlet>;
+  return <Outlet />;
 };
 
 export default ProtectedRoute;
