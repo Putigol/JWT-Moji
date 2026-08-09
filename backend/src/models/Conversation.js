@@ -13,7 +13,7 @@ const participantSchema = new mongoose.Schema(
     },
   },
   {
-    _id: false,
+    _id: false, //schema phụ nên ko cần ID
   },
 );
 
