@@ -19,6 +19,7 @@ const friendSchema = new mongoose.Schema(
 );
 
 friendSchema.pre("save", function (next) {
+  //pre sẽ chạy trước khi lưu vào database
   const a = this.userA.toString();
   const b = this.userB.toString();
 
@@ -30,7 +31,7 @@ friendSchema.pre("save", function (next) {
   next();
 });
 
-friendSchema.index({ userA: 1, userB: 1 }, { unique: true });
+friendSchema.index({ userA: 1, userB: 1 }, { unique: true }); //đảm bảo ko bị trùng
 
 const Friend = mongoose.model("Friend", friendSchema);
 
