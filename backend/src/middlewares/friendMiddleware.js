@@ -1,0 +1,37 @@
+import Conversation from "../models/Conversation.js";
+import Friend from "../models/Friend.js";
+
+const pair = (a, b) => (a < b ? [a, b] : [b, a]);
+
+export const checkFriendship = async (req, res, next) => {
+  try {
+    const me = req.user._id.toString();
+    const recipientId = req.body?.recipientId ?? null;
+
+    if (!recipientId && memberIds.length === 0) {
+      return res
+        .status(400)
+        .json({ message: "Cần cung cấp recipientId hoặc memberIds" });
+    }
+
+    if (recipientId) {
+      const [userA, userB] = pair(me, recipientId);
+
+      //Kiểm tra xem có phải là bạn bè không
+      const isFriend = await Friend.findOne({ userA, userB });
+
+      if (!isFriend) {
+        return res
+          .status(403)
+          .json({ message: "Bạn chưa kết bạn với người này" });
+      }
+
+      return next();
+    }
+
+    //todo: chat nhóm
+  } catch (error) {
+    console.error("Lỗi checkGroupMembership:", error);
+    return res.status(500).json({ message: "Lỗi hệ thống" });
+  }
+};
