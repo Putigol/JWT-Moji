@@ -8,6 +8,8 @@ export const checkFriendship = async (req, res, next) => {
     const me = req.user._id.toString();
     const recipientId = req.body?.recipientId ?? null;
 
+    //chỉ những người có quan hệ bạn bè mới được tạo nhóm
+
     if (!recipientId && memberIds.length === 0) {
       return res
         .status(400)

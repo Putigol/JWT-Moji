@@ -46,3 +46,5 @@ export const sendDirectMessage = async (req, res) => {
     return res.status(500).json({ message: "Lỗi hệ thống" });
   }
 };
+
+export const sendGroupMessage = async (req, res) => {};
