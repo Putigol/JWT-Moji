@@ -8,7 +8,7 @@ import { checkFriendship } from "../middlewares/friendMiddleware.js";
 
 const router = express.Router();
 
-router.post("/", createConversation); //middleware - controller
+router.post("/",checkFriendship, createConversation); //middleware - controller
 router.get("/", getConversations);
 router.get("/:conversationId/messages", getMessages);
 
