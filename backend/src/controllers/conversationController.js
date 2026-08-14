@@ -77,6 +77,50 @@ export const createConversation = async (req, res) => {
   }
 };
 
-export const getConversations = async (req, res) => {};
+//API lấy danh sách cuộc hội thoại
+export const getConversations = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const conversations = await Conversation.find({
+      "participants.userId": userId, //lấy những conversation mà mảng participants chứa user hiện tại
+    })
+      .sort({ lastMessageAt: -1, updatedAt: -1 })
+      .populate({
+        path: "participants.userId",
+        select: "displayName avatarUrl",
+      })
+      //người gửi
+      .populate({
+        path: "lastMessage.senderId",
+        select: "displayName avatarUrl",
+      })
+      //người nhận
+      .populate({
+        path: "seenBy",
+        select: "displayName avatarUrl",
+      });
+
+    const formatted = conversations.map((convo) => {
+      //nếu participants undefined thì tạo mảng rỗng
+      const participants = (convo.participants || []).map((p) => ({
+        _id: p.userId?._id,
+        displayName: p.userId?.displayName,
+        avatarUrl: p.userId?.avatarUrl ?? null,
+        joinedAt: p.joinedAt,
+      }));
+
+      return {
+        ...convo.toObject(), //phân rã mongoose document thành JS object
+        unreadCounts: convo.unreadCounts || {}, //nếu undefined thì tạo object rỗng
+        participants,
+      };
+    });
+
+    return res.status(200).json({ conversations: formatted });
+  } catch (error) {
+    console.error("Lỗi xảy ra khi lấy conversations", error);
+    return res.status(500).json({ message: "Lỗi hệ thống" });
+  }
+};
 
 export const getMessages = async (req, res) => {};
