@@ -123,4 +123,40 @@ export const getConversations = async (req, res) => {
   }
 };
 
-export const getMessages = async (req, res) => {};
+export const getMessages = async (req, res) => {
+  try {
+    const { conversationId } = req.params;
+    //tới giới hạn 50 tin thì phân trang dùng con trỏ để đánh dấu vị trí phân trang
+    const { limit = 50, cursor } = req.query;
+
+    const query = { conversationId };
+
+    //nếu đang load tin cũ thì query những tin cũ hơn móc móc thời điểm hiện tại
+    if (cursor) {
+      query.createdAt = { $lt: new Date(cursor) }; //lt: less than
+    }
+
+    let messages = await Message.find(query)
+      .sort({ createdAt: -1 })
+      .limit(Number(limit) + 1); //lấy dư ra 1 tin để xem còn trang kế tiếp hay không
+
+    let nextCursor = null;
+
+    if (messages.length > Number(limit)) {
+      const nextMessage = messages[messages.length - 1];
+      nextCursor = nextMessage.createdAt.toISOString();
+      messages.pop();
+    }
+
+    //đảo ngược để thể hiện đúng thứ tự hiển thị trong khung chat
+    messages = messages.reverse();
+
+    return res.status(200).json({
+      messages,
+      nextCursor,
+    });
+  } catch (error) {
+    console.error("Lỗi xảy ra khi lấy messages", error);
+    return res.status(500).json({ message: "Lỗi hệ thống" });
+  }
+};
