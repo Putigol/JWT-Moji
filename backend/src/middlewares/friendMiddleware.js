@@ -66,6 +66,7 @@ export const checkGroupMembership = async (req, res, next) => {
         .json({ message: "Không tìm thấy cuộc trò chuyện" });
     }
 
+    //dùng hàm some để dò trong participants
     const isMember = conversation.participants.some(
       (p) => p.userId.toString() === userId.toString(),
     );
@@ -74,6 +75,7 @@ export const checkGroupMembership = async (req, res, next) => {
       return res.status(403).json({ message: "Bạn không ở trong group này." });
     }
 
+    //không cần phải query conversation lại
     req.conversation = conversation;
 
     next();
