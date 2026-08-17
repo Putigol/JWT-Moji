@@ -1,5 +1,3 @@
-import * as React from "react";
-
 // import { NavUser } from "@/components/sidebar/nav-user";
 import {
   Sidebar,
@@ -21,8 +19,16 @@ import NewGroupChatModal from "../chat/NewGroupChatModal";
 import GroupChatList from "../chat/GroupChatList";
 import AddFriendModal from "../chat/AddFriendModal";
 import DirectMessageList from "../chat/DirectMessageList";
+import { useThemeStore } from "@/stores/useThemeStore";
+import { useEffect } from "react";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { isDark, setTheme } = useThemeStore();
+
+  useEffect(() => {
+    setTheme(isDark);
+  }, [isDark, setTheme]);
+
   return (
     <Sidebar variant="inset" {...props}>
       {/* Header */}
@@ -39,8 +45,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   <div className="flex items-center gap-3">
                     <Sun className="w-4 h-4 text-white/90" />
                     <Switch
-                      checked={true}
-                      onCheckedChange={() => {}}
+                      checked={isDark}
+                      onCheckedChange={setTheme}
                       className="data-[state=checked]:bg-white/60"
                     />
                     <Moon className="w-4 h-4 text-white/90" />
