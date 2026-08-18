@@ -3,6 +3,9 @@ import ChatCard from "./ChatCard";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { useChatStore } from "@/stores/useChatStore";
 import { cn } from "@/lib/utils";
+import UserAvatar from "./UserAvatar";
+import StatusBadge from "./StatusBadge";
+import UnreadCountBadge from "./UnreadCountBadge";
 
 const DirectMessageCard = ({ convo }: { convo: Conversation }) => {
   const { user } = useAuthStore(); //lấy thông tin user hiện tại
@@ -47,9 +50,15 @@ const DirectMessageCard = ({ convo }: { convo: Conversation }) => {
         unreadCount={unreadCount}
         leftSection={
           <>
-            {/* todo: avatar */}
-            {/* todo: status badge */}
-            {/* todo: unread count */}
+            <UserAvatar
+              type="sidebar"
+              name={otherUser.displayName ?? ""}
+              avatarUrl={otherUser.avatarUrl ?? undefined}
+            />
+
+            {/* todo: socket io */}
+            <StatusBadge status={"offline"} />
+            {unreadCount > 0 && <UnreadCountBadge unreadCount={unreadCount} />}
           </>
         }
         //trong direct chat thì subtitle là last message
@@ -57,7 +66,7 @@ const DirectMessageCard = ({ convo }: { convo: Conversation }) => {
           <p
             className={cn(
               "text-sm truncate",
-              unreadCount > 0 //nếu còn unread thì làm đậm lên
+              unreadCount > 0 //nếu có unread thì làm đậm lên
                 ? "font-medium text-foreground"
                 : "text-muted-foreground",
             )}
