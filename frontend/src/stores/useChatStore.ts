@@ -1,3 +1,4 @@
+import { chatService } from "@/services/chatService";
 import type { ChatState } from "@/types/store";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
@@ -18,6 +19,17 @@ export const useChatStore = create<ChatState>()(
           activeConversationId: null,
           loading: false,
         });
+      },
+      fetchConversations: async () => {
+        try {
+          set({ loading: true }); //đang load data
+          const { conversations } = await chatService.fetchConversations(); //phân rã
+          set({ conversations, loading: false });
+        } catch (error) {
+          console.error("Lỗi xảy ra khi fetchConversations", error);
+        } finally {
+          set({ loading: false });
+        }
       },
     }),
 
