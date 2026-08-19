@@ -13,7 +13,7 @@ const DirectMessageCard = ({ convo }: { convo: Conversation }) => {
     activeConversationId, //biết conversation nào được chọn
     setActiveConversation, //đổi activeConversation khi chọn conversation khác
     messages,
-    // fetchMessages, //list tin nhắn
+    fetchMessages, //list tin nhắn
   } = useChatStore();
 
   if (!user) return null;
@@ -31,8 +31,7 @@ const DirectMessageCard = ({ convo }: { convo: Conversation }) => {
   const handleSelectConversation = async (id: string) => {
     setActiveConversation(id);
     if (!messages[id]) {
-      // await fetchMessages(); //load message nếu conversation chưa có tin nhắn
-      //todo: fetch messages
+      await fetchMessages(); //load message nếu conversation chưa có tin nhắn
     }
   };
   return (
