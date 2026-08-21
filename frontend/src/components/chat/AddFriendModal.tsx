@@ -1,5 +1,5 @@
-const AddFriendModel = () => {
-  return <div>AddFriendModel</div>;
+const AddFriendModal = () => {
+  return <div>AddFriendModal</div>;
 };
 
-export default AddFriendModel;
+export default AddFriendModal;
