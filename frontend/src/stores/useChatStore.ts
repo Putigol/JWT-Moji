@@ -94,6 +94,40 @@ export const useChatStore = create<ChatState>()(
           set({ messageLoading: false });
         }
       },
+
+      //Gọi API gửi tin nhắn
+      sendDirectMessage: async (recipientId, content, imgUrl) => {
+        try {
+          const { activeConversationId } = get();
+          await chatService.sendDirectMessage(
+            recipientId,
+            content,
+            imgUrl,
+            activeConversationId || undefined,
+          );
+          //update state
+          set((state) => ({
+            conversations: state.conversations.map((c) =>
+              // tin nhắn mới vừa được gửi và trạng thái đã xem cần được tính lại
+              c._id === activeConversationId ? { ...c, seenBy: [] } : c,
+            ),
+          }));
+        } catch (error) {
+          console.error("Lỗi xảy ra khi gửi direct message", error);
+        }
+      },
+      sendGroupMessage: async (conversationId, content, imgUrl) => {
+        try {
+          await chatService.sendGroupMessage(conversationId, content, imgUrl);
+          set((state) => ({
+            conversations: state.conversations.map((c) =>
+              c._id === get().activeConversationId ? { ...c, seenBy: [] } : c,
+            ),
+          }));
+        } catch (error) {
+          console.error("Lỗi xảy ra gửi group message", error);
+        }
+      },
     }),
 
     {

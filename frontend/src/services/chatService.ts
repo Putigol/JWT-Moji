@@ -21,4 +21,35 @@ export const chatService = {
 
     return { messages: res.data.messages, cursor: res.data.nextCursor };
   },
+
+  //Gọi API gửi tin nhắn
+  async sendDirectMessage(
+    recipientId: string,
+    content: string = "",
+    imgUrl?: string, //cho phép gửi hình
+    conversationId?: string,
+  ) {
+    //lưu kq trả về từ API
+    const res = await api.post("/messages/direct", {
+      recipientId,
+      content,
+      imgUrl,
+      conversationId,
+    });
+
+    return res.data.message;
+  },
+
+  async sendGroupMessage(
+    conversationId: string,
+    content: string = "", //tránh lỗi chỉ gửi ảnh
+    imgUrl?: string,
+  ) {
+    const res = await api.post("/messages/group", {
+      conversationId,
+      content,
+      imgUrl,
+    });
+    return res.data.message;
+  },
 };
