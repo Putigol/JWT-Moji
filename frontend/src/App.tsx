@@ -6,13 +6,28 @@ import SignUpPage from "./pages/SignUpPage";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import { useThemeStore } from "./stores/useThemeStore";
 import { useEffect } from "react";
+import { useAuthStore } from "./stores/useAuthStore";
+import { useSocketStore } from "./stores/useSocketStore";
 
 function App() {
   const { isDark, setTheme } = useThemeStore();
+  //khởi động socket
+  const { accessToken } = useAuthStore();
+  const { connectSocket, disconnectSocket } = useSocketStore();
 
   useEffect(() => {
     setTheme(isDark);
   }, [isDark, setTheme]);
+
+  useEffect(() => {
+    if (accessToken) {
+      connectSocket();
+    }
+
+    //cleanup
+    return () => disconnectSocket();
+  }, [accessToken, connectSocket, disconnectSocket]);
+
   return (
     <>
       <Toaster richColors />
