@@ -6,9 +6,11 @@ import { cn } from "@/lib/utils";
 import UserAvatar from "./UserAvatar";
 import StatusBadge from "./StatusBadge";
 import UnreadCountBadge from "./UnreadCountBadge";
+import { useSocketStore } from "@/stores/useSocketStore";
 
 const DirectMessageCard = ({ convo }: { convo: Conversation }) => {
   const { user } = useAuthStore(); //lấy thông tin user hiện tại
+  const { onlineUsers } = useSocketStore();
   const {
     activeConversationId, //biết conversation nào được chọn
     setActiveConversation, //đổi activeConversation khi chọn conversation khác
@@ -56,7 +58,13 @@ const DirectMessageCard = ({ convo }: { convo: Conversation }) => {
             />
 
             {/* todo: socket io */}
-            <StatusBadge status={"offline"} />
+            <StatusBadge
+              status={
+                onlineUsers.includes(otherUser?._id ?? "")
+                  ? "online"
+                  : "offline"
+              }
+            />
             {unreadCount > 0 && <UnreadCountBadge unreadCount={unreadCount} />}
           </>
         }

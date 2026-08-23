@@ -7,6 +7,7 @@ const baseURL = import.meta.env.VITE_SOCKET_URL;
 
 export const useSocketStore = create<SocketState>((set, get) => ({
   socket: null,
+  onlineUsers: [],
   //tạo socket rồi kết nối lên server
   connectSocket: () => {
     const accessToken = useAuthStore.getState().accessToken;
@@ -24,6 +25,12 @@ export const useSocketStore = create<SocketState>((set, get) => ({
 
     socket.on("connect", () => {
       console.log("Đã kết nối với socket");
+    });
+
+    //lắng nghe sự kiện online user từ BE
+    socket.on("online-users", (userIds) => {
+      //cập nhật store
+      set({ onlineUsers: userIds });
     });
   },
 
