@@ -15,6 +15,11 @@ const ChatWindowBody = () => {
     (c) => c._id === activeConversationId,
   );
 
+  const lastMessageStatus: "delivered" | "seen" =
+    selectedConvo?.seenBy && selectedConvo.seenBy.length > 0
+      ? "seen"
+      : "delivered";
+
   //Tìm xem có selectedConvo hay không
   if (!selectedConvo) {
     return <ChatWelcomeScreen />;
@@ -39,7 +44,7 @@ const ChatWindowBody = () => {
             index={index}
             messages={messages}
             selectedConvo={selectedConvo}
-            lastMessageStatus="delivered"
+            lastMessageStatus={lastMessageStatus}
           />
         ))}
       </div>

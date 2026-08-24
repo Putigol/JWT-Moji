@@ -58,8 +58,25 @@ export const useSocketStore = create<SocketState>((set, get) => ({
       //Nếu user đang mở convo
       if (
         useChatStore.getState().activeConversationId === message.conversationId
-      )
-        useChatStore.getState().updateConversation(updatedConversation);
+      ) {
+        //có TN mới ngay khi đang trong convo đang chat thì mark as seen
+        useChatStore.getState().markAsSeen();
+      }
+      useChatStore.getState().updateConversation(updatedConversation);
+    });
+
+    //lắng nghe sự kiện read message
+    socket.on("read-message", ({ conversation, lastMessage }) => {
+      const updated = {
+        //chứa những thông tin update cho conversation
+        _id: conversation._id,
+        lastMessage,
+        lastMessageAt: conversation.lastMessageAt,
+        unreadCounts: conversation.unreadCounts,
+        seenBy: conversation.seenBy,
+      };
+
+      useChatStore.getState().updateConversation(updated); //cập nhật conversation trong store
     });
   },
 

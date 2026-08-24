@@ -5,17 +5,35 @@ import { SidebarInset } from "../ui/sidebar";
 import ChatWindowHeader from "./ChatWindowHeader";
 import ChatWindowBody from "./ChatWindowBody";
 import MessageInput from "./MessageInput";
+import { useEffect } from "react";
 
 const ChatWindowLayout = () => {
   const {
     activeConversationId,
     conversations,
     messageLoading: loading,
+    markAsSeen,
   } = useChatStore();
 
   //cần biết cuộc trò chuyện nào được chọn
   const selectedConvo =
     conversations.find((c) => c._id === activeConversationId) ?? null;
+
+  useEffect(() => {
+    if (!selectedConvo) {
+      return;
+    }
+
+    const markSeen = async () => {
+      try {
+        await markAsSeen();
+      } catch (error) {
+        console.error("Lỗi khi markSeen", error);
+      }
+    };
+
+    markSeen();
+  }, [markAsSeen, selectedConvo]);
 
   if (!selectedConvo) return <ChatWelcomeScreen />;
 
