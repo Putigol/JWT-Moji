@@ -112,7 +112,7 @@ export const signOut = async (req, res) => {
   try {
     //lấy refreshToken từ cookie
     const token = req.cookies?.refreshToken;
-    if (!token) {
+    if (token) {
       //xoá refresh token trong Session
       await Session.deleteOne({ refreshToken: token });
       //xoá cookie
