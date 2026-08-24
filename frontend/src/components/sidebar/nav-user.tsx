@@ -1,5 +1,3 @@
-"use client";
-
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -17,14 +15,23 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import type { User } from "@/types/user";
-import Logout from "../auth/Logout";
+import { useAuthStore } from "@/stores/useAuthStore";
+import { useNavigate } from "react-router";
 import { ChevronsUpDownIcon, BellIcon, UserIcon } from "lucide-react";
+import Logout from "../auth/Logout";
 
 export function NavUser({ user }: { user: User }) {
   const { isMobile } = useSidebar();
+  const { signOut } = useAuthStore();
+  const navigate = useNavigate();
   const parts = user.displayName.split(/\s+/).filter(Boolean);
   const firstName =
     parts.length > 1 ? parts[parts.length - 1] : parts[0] || "M";
+
+  const handleLogout = async () => {
+    await signOut();
+    navigate("/signin");
+  };
 
   return (
     <SidebarMenu>
@@ -54,7 +61,7 @@ export function NavUser({ user }: { user: User }) {
             <DropdownMenuGroup>
               <DropdownMenuLabel className="p-0 font-normal">
                 <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                  <Avatar>
+                  <Avatar className="h-8 w-8 rounded-lg">
                     <AvatarImage src={user.avatarUrl} alt={user.username} />
                     <AvatarFallback className="rounded-lg">
                       {firstName.charAt(0)}
@@ -83,9 +90,15 @@ export function NavUser({ user }: { user: User }) {
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             {/* logout nổi bật với màu đỏ */}
-            <DropdownMenuItem className="cursor-pointer" variant="destructive">
-              <Logout />
-              Đăng xuất
+            <DropdownMenuItem
+              className="cursor-pointer"
+              variant="destructive"
+              onClick={handleLogout}
+            >
+              <span className="flex items-center gap-2">
+                <Logout />
+                Đăng xuất
+              </span>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
