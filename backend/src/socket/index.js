@@ -2,6 +2,7 @@ import { Server } from "socket.io";
 import http from "http";
 import express from "express";
 import { socketAuthMiddleware } from "../middlewares/socketMiddleware.js";
+import { getUserConversationsForSocketIO } from "../controllers/conversationController.js";
 
 const app = express();
 
@@ -30,6 +31,11 @@ io.on("connection", async (socket) => {
   io.emit("online-users", Array.from(onlineUsers.keys()));
 
   socket.join(user._id.toString());
+
+  //Khi user connect thì add vào room (convo)
+  const conversationIds = await getUserConversationsForSocketIO(user._id);
+  //join đúng room
+  conversationIds.forEach((id) => socket.join(id));
 
   socket.on("disconnect", () => {
     onlineUsers.delete(user._id);
