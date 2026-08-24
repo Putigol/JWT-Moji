@@ -128,6 +128,58 @@ export const useChatStore = create<ChatState>()(
           console.error("Lỗi xảy ra gửi group message", error);
         }
       },
+
+      addMessage: async (message) => {
+        try {
+          const { user } = useAuthStore.getState();
+          const { fetchMessages } = get();
+
+          message.isOwn = message.senderId === user?._id;
+
+          const convoId = message.conversationId;
+
+          //list TN trong store
+          let prevItems = get().messages[convoId]?.items ?? [];
+
+          //client chưa có TN nào
+          if (prevItems.length === 0) {
+            //fetch TN cũ
+            await fetchMessages(message.conversationId);
+            prevItems = get().messages[convoId]?.items ?? [];
+          }
+
+          //Kiểm tra list có tin nhắn này chưa
+          set((state) => {
+            if (prevItems.some((m) => m._id === message._id)) {
+              return state;
+            }
+
+            //update
+            return {
+              messages: {
+                ...state.messages,
+                [convoId]: {
+                  items: [...prevItems, message], //thêm tin mới nhất vào cuối
+                  hasMore: state.messages[convoId].hasMore,
+                  nextCursor: state.messages[convoId].nextCursor ?? undefined,
+                },
+              },
+            };
+          });
+        } catch (error) {
+          console.error("Lỗi xảy khi ra add message:", error);
+        }
+      },
+
+      updateConversation: (conversation) => {
+        //update state
+        set((state) => ({
+          conversations: state.conversations.map((c) =>
+            //cập nhật các trường
+            c._id === conversation._id ? { ...c, ...conversation } : c,
+          ),
+        }));
+      },
     }),
 
     {
