@@ -27,6 +27,12 @@ export const socketAuthMiddleware = async (socket, next) => {
 
     next();
   } catch (error) {
+    if (error.name === "TokenExpiredError") {
+      const expiredError = new Error("Token đã hết hạn");
+      expiredError.data = { code: "TOKEN_EXPIRED" };
+      return next(expiredError);
+    }
+
     console.error("Lỗi khi verify JWT trong socketMiddleware", error);
     next(new Error("Unauthorized"));
   }
