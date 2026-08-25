@@ -28,6 +28,29 @@ export const useSocketStore = create<SocketState>((set, get) => ({
       console.log("Đã kết nối với socket");
     });
 
+    socket.on("connect_error", async (error) => {
+      const errorData = (error as Error & { data?: { code?: string } }).data;
+      if (errorData?.code !== "TOKEN_EXPIRED") return;
+
+      try {
+        await useAuthStore.getState().refresh();
+        const newAccessToken = useAuthStore.getState().accessToken;
+
+        if (!newAccessToken) {
+          socket.disconnect();
+          return;
+        }
+
+        if (socket.connected) return;
+
+        socket.auth = { token: newAccessToken };
+        socket.connect();
+      } catch (refreshError) {
+        console.error("Không thể làm mới phiên socket", refreshError);
+        socket.disconnect();
+      }
+    });
+
     //lắng nghe sự kiện online user từ BE
     socket.on("online-users", (userIds) => {
       //cập nhật store

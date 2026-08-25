@@ -19,14 +19,16 @@ const MessageItem = ({
   selectedConvo,
   lastMessageStatus,
 }: MessageItemProps) => {
-  const prev = messages[index - 1];
+  const prev = index + 1 < messages.length ? messages[index + 1] : undefined;
 
   //tạo flag quyết định xem có tách nhóm message ko
-  const isGroupBreak =
+  const isShowTime =
     index === 0 ||
     new Date(message.createdAt).getTime() -
       new Date(prev?.createdAt || 0).getTime() >
       300000; // 5 phút
+
+  const isGroupBreak = isShowTime || message.senderId !== prev?.senderId;
 
   //lấy data sender để hiển thị tên và avatar
   const participant = selectedConvo.participants.find(
@@ -35,6 +37,13 @@ const MessageItem = ({
 
   return (
     <>
+      {/* time */}
+      {isShowTime && (
+        <span className="text-xs text-muted-foreground px-1">
+          {formatMessageTime(new Date(message.createdAt))}
+        </span>
+      )}
+
       <div
         className={cn(
           "flex gap-2 message-bounce mt-1",
@@ -73,13 +82,6 @@ const MessageItem = ({
               {message.content}
             </p>
           </Card>
-
-          {/* time */}
-          {isGroupBreak && (
-            <span className="text-xs text-muted-foreground px-1">
-              {formatMessageTime(new Date(message.createdAt))}
-            </span>
-          )}
 
           {/* seen/ delivered */}
           {message.isOwn && message._id === selectedConvo.lastMessage?._id && (
