@@ -15,6 +15,7 @@
     "@emoji-mart/react": "^1.1.1",
     "@fontsource-variable/geist": "^5.3.0",
     "@hookform/resolvers": "^5.7.1",
+    "@radix-ui/react-tabs": "^1.1.21",
     "@tailwindcss/vite": "^4.3.3",
     "axios": "^1.19.0",
     "class-variance-authority": "^0.7.1",
