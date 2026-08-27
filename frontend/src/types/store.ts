@@ -1,4 +1,4 @@
-import type { FriendRequest, User } from "./user";
+import type { Friend, FriendRequest, User } from "./user";
 import type { Conversation, Message } from "./chat";
 import type { Socket } from "socket.io-client";
 
@@ -75,6 +75,7 @@ export interface SocketState {
 }
 
 export interface FriendState {
+  friends: Friend[];
   loading: boolean; //biết khi nào API chạy xong
   receivedList: FriendRequest[]; //danh sách yêu cầu kết bạn đã nhận
   sentList: FriendRequest[]; //danh sách yêu cầu bẻ kết bạn đã gửi
@@ -83,4 +84,5 @@ export interface FriendState {
   getAllFriendRequests: () => Promise<void>;
   acceptRequest: (requestId: string) => Promise<void>;
   declineRequest: (requestId: string) => Promise<void>;
+  getFriends: () => Promise<void>;
 }
