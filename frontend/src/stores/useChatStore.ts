@@ -244,6 +244,7 @@ export const useChatStore = create<ChatState>()(
       },
       createConversation: async (type, name, memberIds) => {
         try {
+          set({ loading: true });
           // gọi chatService tạo conversation
           const conversation = await chatService.createConversation(
             type,
@@ -263,6 +264,8 @@ export const useChatStore = create<ChatState>()(
             "Lỗi xảy ra khi gọi createConversation trong store",
             error,
           );
+        } finally {
+          set({ loading: false });
         }
       },
     }),

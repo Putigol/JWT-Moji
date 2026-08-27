@@ -9,18 +9,21 @@ import {
   DialogTrigger,
 } from "../ui/dialog";
 import { Button } from "../ui/button";
-import { Users } from "lucide-react";
+import { UserPlus, Users } from "lucide-react";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import type { Friend } from "@/types/user";
 import InviteSuggestionList from "../newGroupChat/InviteSuggestionList";
 import SelectedUsersList from "../newGroupChat/SelectedUsersList";
+import { toast } from "sonner";
+import { useChatStore } from "@/stores/useChatStore";
 
 const NewGroupChatModal = () => {
   const [groupName, setGroupName] = useState(""); //state lưu tên nhóm
   const [search, setSearch] = useState(""); //state lưu tên user nhập vào input
   const { friends, getFriends } = useFriendStore(); //lấy, load danh sách bạn bè
   const [invitedUsers, setInvitedUsers] = useState<Friend[]>([]);
+  const { loading, createConversation } = useChatStore();
 
   const handleGetFriends = async () => {
     await getFriends();
@@ -35,6 +38,31 @@ const NewGroupChatModal = () => {
   const handleRemoveFriend = (friend: Friend) => {
     //giữ lại những user có id khác user muốn xoá
     setInvitedUsers(invitedUsers.filter((u) => u._id !== friend._id));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    try {
+      //chặn hành vi mặc định refresh trang
+      e.preventDefault();
+      if (invitedUsers.length === 0) {
+        toast.warning("Bạn phải mời ít nhất 1 thành viên vào nhóm");
+        return;
+      }
+
+      await createConversation(
+        "group",
+        groupName,
+        invitedUsers.map((u) => u._id), //lấy id của những user đa được chọn
+      );
+
+      setSearch(""); //reset search
+      setInvitedUsers([]); //modal trở về state ban đầu
+    } catch (error) {
+      console.error(
+        "Lỗi xảy ra khi handleSubmit trong NewGroupChatModal:",
+        error,
+      );
+    }
   };
 
   const filteredFriends = friends.filter(
@@ -61,7 +89,7 @@ const NewGroupChatModal = () => {
           <DialogTitle className="capitalize">tạo nhóm chat mới</DialogTitle>
         </DialogHeader>
 
-        <form className="space-y-4" onSubmit={() => {}}>
+        <form className="space-y-4" onSubmit={handleSubmit}>
           {/* tên nhóm */}
           <div className="space-y-2">
             <Label htmlFor="groupName" className="text-sm font-semibold">
@@ -74,7 +102,7 @@ const NewGroupChatModal = () => {
               value={groupName} //liên kết input với state
               //callback để mỗi khi type thì groupName tự cập nhật theo đúng giá trị
               onChange={(e) => setGroupName(e.target.value)}
-              required
+              required //tên nhóm bắt buộc phải có
             />
           </div>
 
@@ -107,7 +135,22 @@ const NewGroupChatModal = () => {
             />
           </div>
 
-          <DialogFooter></DialogFooter>
+          <DialogFooter>
+            <Button
+              type="submit"
+              disabled={loading}
+              className="flex-1 bg-gradient-chat text-white hover:opacity-90 transition-smooth"
+            >
+              {loading ? (
+                <span>Đang tạo...</span>
+              ) : (
+                <>
+                  <UserPlus className="size-4 mr-2" />
+                  Tạo nhóm
+                </>
+              )}
+            </Button>
+          </DialogFooter>
         </form>
       </DialogContent>
     </Dialog>
