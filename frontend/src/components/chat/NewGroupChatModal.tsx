@@ -14,6 +14,7 @@ import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import type { Friend } from "@/types/user";
 import InviteSuggestionList from "../newGroupChat/InviteSuggestionList";
+import SelectedUsersList from "../newGroupChat/SelectedUsersList";
 
 const NewGroupChatModal = () => {
   const [groupName, setGroupName] = useState(""); //state lưu tên nhóm
@@ -29,6 +30,11 @@ const NewGroupChatModal = () => {
     //update danh sách InvitedUsers
     setInvitedUsers([...invitedUsers, friend]); //biết cần thêm user nào đã đc chọn
     setSearch(""); //reset input
+  };
+
+  const handleRemoveFriend = (friend: Friend) => {
+    //giữ lại những user có id khác user muốn xoá
+    setInvitedUsers(invitedUsers.filter((u) => u._id !== friend._id));
   };
 
   const filteredFriends = friends.filter(
@@ -93,6 +99,12 @@ const NewGroupChatModal = () => {
                 onSelect={handleSelectFriend}
               />
             )}
+
+            {/* danh sách user đã chọn */}
+            <SelectedUsersList
+              invitedUsers={invitedUsers}
+              onRemove={handleRemoveFriend}
+            />
           </div>
 
           <DialogFooter></DialogFooter>
