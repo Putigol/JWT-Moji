@@ -63,8 +63,14 @@ export interface ChatState {
   updateConversation: (
     conversation: Pick<Conversation, "_id"> & Partial<Conversation>,
   ) => void;
-
+  //đã xem
   markAsSeen: () => Promise<void>;
+  addConvo: (convo: Conversation) => void;
+  createConversation: (
+    type: "group" | "direct",
+    name: string,
+    memberIds: string[],
+  ) => Promise<void>;
 }
 
 export interface SocketState {
