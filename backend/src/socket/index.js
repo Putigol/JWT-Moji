@@ -42,6 +42,7 @@ io.on("connection", async (socket) => {
     socket.join(conversationId);
   });
 
+  //tạo room theo userId
   socket.join(user._id.toString());
 
   socket.on("disconnect", () => {
