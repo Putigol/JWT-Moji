@@ -12,15 +12,30 @@ import { Button } from "../ui/button";
 import { Users } from "lucide-react";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
+import type { Friend } from "@/types/user";
+import InviteSuggestionList from "../newGroupChat/InviteSuggestionList";
 
 const NewGroupChatModal = () => {
   const [groupName, setGroupName] = useState(""); //state lưu tên nhóm
   const [search, setSearch] = useState(""); //state lưu tên user nhập vào input
   const { friends, getFriends } = useFriendStore(); //lấy, load danh sách bạn bè
+  const [invitedUsers, setInvitedUsers] = useState<Friend[]>([]);
 
   const handleGetFriends = async () => {
     await getFriends();
   };
+
+  const handleSelectFriend = (friend: Friend) => {
+    //update danh sách InvitedUsers
+    setInvitedUsers([...invitedUsers, friend]); //biết cần thêm user nào đã đc chọn
+    setSearch(""); //reset input
+  };
+
+  const filteredFriends = friends.filter(
+    (friend) =>
+      friend.displayName.toLowerCase().includes(search.toLowerCase()) &&
+      !invitedUsers.some((u) => u._id === friend._id), //lọc ra user đã chọn rồi
+  );
 
   return (
     <Dialog>
@@ -70,6 +85,14 @@ const NewGroupChatModal = () => {
               onChange={(e) => setSearch(e.target.value)} //cập nhật state
               className="flex-1"
             />
+
+            {/* danh sách gợi ý */}
+            {search && filteredFriends.length > 0 && (
+              <InviteSuggestionList
+                filteredFriends={filteredFriends}
+                onSelect={handleSelectFriend}
+              />
+            )}
           </div>
 
           <DialogFooter></DialogFooter>
