@@ -101,6 +101,14 @@ export const useSocketStore = create<SocketState>((set, get) => ({
 
       useChatStore.getState().updateConversation(updated); //cập nhật conversation trong store
     });
+
+    // lắng nghe sự kiện new group chat
+    socket.on("new-group", (conversation) => {
+      //update danh sách trò chuyện phía client
+      useChatStore.getState().addConvo(conversation); //cập nhật trong store
+      //cho socket join với room
+      socket.emit("join-conversation", conversation._id);
+    });
   },
 
   //Ngắt socket khi user logout
