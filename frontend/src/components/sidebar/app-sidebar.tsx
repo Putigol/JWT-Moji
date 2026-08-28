@@ -81,12 +81,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
         {/* Direct Message */}
         <SidebarGroup>
-          <SidebarGroupLabel className="uppercase">bạn bè</SidebarGroupLabel>
-
-          {/* Kết bạn */}
-          <SidebarGroupAction title="Kết Bạn" className="cursor-pointer">
+          <div className="flex items-center justify-between">
+            <SidebarGroupLabel className="uppercase">bạn bè</SidebarGroupLabel>
+            {/* Kết bạn */}
             <AddFriendModal />
-          </SidebarGroupAction>
+          </div>
 
           {/* Danh sách bạn bè */}
           <SidebarGroupContent>
@@ -96,7 +95,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarContent>
 
       {/* Footer */}
-      {/*  */}
       <SidebarFooter>{user && <NavUser user={user} />}</SidebarFooter>
     </Sidebar>
   );
