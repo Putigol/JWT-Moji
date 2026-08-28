@@ -21,12 +21,16 @@ import { ChevronsUpDownIcon, Bell, UserIcon } from "lucide-react";
 import Logout from "../auth/Logout";
 import { useState } from "react";
 import FriendRequestDialog from "../friendRequest/FriendRequestDialog";
+import ProfileDialog from "../profile/ProfileDialog";
 
 export function NavUser({ user }: { user: User }) {
   const { isMobile } = useSidebar();
   const [friendRequestOpen, setFriendRequestOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
   const { signOut } = useAuthStore();
   const navigate = useNavigate();
+
+  //Hiển thị 1st name
   const parts = user.displayName.split(/\s+/).filter(Boolean);
   const firstName =
     parts.length > 1 ? parts[parts.length - 1] : parts[0] || "M";
@@ -86,7 +90,7 @@ export function NavUser({ user }: { user: User }) {
 
               <DropdownMenuSeparator />
               <DropdownMenuGroup>
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setProfileOpen(true)}>
                   <UserIcon className="text-muted-foreground dark:group-focus:!text-accent-foreground" />
                   Tài khoản
                 </DropdownMenuItem>
@@ -116,6 +120,8 @@ export function NavUser({ user }: { user: User }) {
         open={friendRequestOpen}
         setOpen={setFriendRequestOpen}
       />
+
+      <ProfileDialog open={profileOpen} setOpen={setProfileOpen} />
     </>
   );
 }
