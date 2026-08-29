@@ -21,10 +21,13 @@ import DirectMessageList from "../chat/DirectMessageList";
 import { useThemeStore } from "@/stores/useThemeStore";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { NavUser } from "./nav-user";
+import { useChatStore } from "@/stores/useChatStore";
+import ConversationSkeleton from "../skeleton/ConversationSkeleton";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { isDark, toggleTheme } = useThemeStore();
   const { user } = useAuthStore();
+  const { convoLoading } = useChatStore();
 
   return (
     <Sidebar variant="inset" {...props}>
@@ -57,7 +60,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
       {/* Content */}
       <SidebarContent className="beautiful-scrollbar">
-        {/* New chat */}
+        {/* New Chat */}
         <SidebarGroup>
           <SidebarGroupContent>
             <CreateNewChat />
@@ -66,30 +69,27 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
         {/* Group Chat */}
         <SidebarGroup>
-          <SidebarGroupLabel className="uppercase">nhóm chat</SidebarGroupLabel>
-
-          {/* Tạo nhóm mới */}
-          <SidebarGroupAction title="Tạo nhóm" className="cursor-pointer">
+          <div className="flex items-center justify-between">
+            <SidebarGroupLabel className="uppercase">
+              nhóm chat
+            </SidebarGroupLabel>
             <NewGroupChatModal />
-          </SidebarGroupAction>
+          </div>
 
-          {/* Danh sách nhóm chat */}
           <SidebarGroupContent>
-            <GroupChatList />
+            {convoLoading ? <ConversationSkeleton /> : <GroupChatList />}
           </SidebarGroupContent>
         </SidebarGroup>
 
-        {/* Direct Message */}
+        {/* Dirrect Message */}
         <SidebarGroup>
-          <div className="flex items-center justify-between">
-            <SidebarGroupLabel className="uppercase">bạn bè</SidebarGroupLabel>
-            {/* Kết bạn */}
+          <SidebarGroupLabel className="uppercase">bạn bè</SidebarGroupLabel>
+          <SidebarGroupAction title="Kết Bạn" className="cursor-pointer">
             <AddFriendModal />
-          </div>
+          </SidebarGroupAction>
 
-          {/* Danh sách bạn bè */}  
           <SidebarGroupContent>
-            <DirectMessageList />
+            {convoLoading ? <ConversationSkeleton /> : <DirectMessageList />}
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
