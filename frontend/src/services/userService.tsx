@@ -1,0 +1,18 @@
+//Service gọi API liên quan đến update user
+
+import api from "@/lib/axios";
+
+export const userService = {
+  //formData: file hình avatar (tiêu chuẩn của JS)
+  uploadAvatar: async (formData: FormData) => {
+    const res = await api.post("/users/uploadAvatar", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+
+    if (res.status === 400) {
+      throw new Error(res.data.message);
+    }
+
+    return res.data;
+  },
+};

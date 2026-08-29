@@ -87,7 +87,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <AddFriendModal />
           </div>
 
-          {/* Danh sách bạn bè */}
+          {/* Danh sách bạn bè */}  
           <SidebarGroupContent>
             <DirectMessageList />
           </SidebarGroupContent>
